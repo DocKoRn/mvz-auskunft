@@ -1,0 +1,131 @@
+{
+  "standorte": [
+    {
+      "id": "pegnitzaue-nord",
+      "name": "MVZ Pegnitzaue Nord",
+      "adresse": {
+        "strasse": "Auwiesenweg 12",
+        "plz": "90419",
+        "ort": "Nürnberg"
+      },
+      "telefon": "0911 9021-100",
+      "fachrichtungen": ["Allgemeinmedizin", "Innere Medizin"],
+      "erreichbarkeit": "U-Bahn U1 bis Haltestelle Auwiesen, von dort 3 Gehminuten. Zehn Besucherparkplätze hinter dem Gebäude, Einfahrt über den Auwiesenweg.",
+      "oeffnungszeiten": {
+        "montag": [["08:00", "12:00"], ["14:00", "18:00"]],
+        "dienstag": [["08:00", "12:00"], ["14:00", "18:00"]],
+        "mittwoch": [["08:00", "12:00"]],
+        "donnerstag": [["08:00", "12:00"], ["14:00", "19:00"]],
+        "freitag": [["08:00", "13:00"]],
+        "samstag": [],
+        "sonntag": []
+      }
+    },
+    {
+      "id": "pegnitzaue-sued",
+      "name": "MVZ Pegnitzaue Süd",
+      "adresse": {
+        "strasse": "Herbstweiherstraße 4",
+        "plz": "90461",
+        "ort": "Nürnberg"
+      },
+      "telefon": "0911 9021-200",
+      "fachrichtungen": ["Allgemeinmedizin", "Orthopädie"],
+      "erreichbarkeit": "Straßenbahnlinie 7, Haltestelle Herbstweiher, direkt vor dem Haus. Keine eigenen Parkplätze, Parkhaus Herbstweiher in 200 Metern Entfernung.",
+      "oeffnungszeiten": {
+        "montag": [["07:30", "13:00"], ["15:00", "18:30"]],
+        "dienstag": [["07:30", "13:00"]],
+        "mittwoch": [["07:30", "13:00"]],
+        "donnerstag": [["07:30", "13:00"], ["15:00", "18:30"]],
+        "freitag": [["07:30", "13:00"]],
+        "samstag": [["09:00", "12:00"]],
+        "sonntag": []
+      }
+    },
+    {
+      "id": "lindenhof",
+      "name": "MVZ Lindenhof",
+      "adresse": {
+        "strasse": "Lindenhofgasse 27",
+        "plz": "90408",
+        "ort": "Nürnberg"
+      },
+      "telefon": "0911 9034-0",
+      "fachrichtungen": ["Dermatologie", "Allgemeinmedizin"],
+      "erreichbarkeit": "U-Bahn U3 bis Haltestelle Lindenhof, Ausgang Nord, danach 5 Gehminuten. Barrierefreier Zugang über die Rampe an der Gebäuderückseite.",
+      "oeffnungszeiten": {
+        "montag": [["08:30", "12:30"], ["14:30", "17:30"]],
+        "dienstag": [["08:30", "12:30"], ["14:30", "17:30"]],
+        "mittwoch": [["08:30", "12:30"]],
+        "donnerstag": [["08:30", "12:30"], ["14:30", "17:30"]],
+        "freitag": [["08:30", "12:00"]],
+        "samstag": [],
+        "sonntag": []
+      }
+    },
+    {
+      "id": "alte-ziegelei",
+      "name": "MVZ Alte Ziegelei",
+      "adresse": {
+        "strasse": "Ziegeleiring 3",
+        "plz": "90429",
+        "ort": "Nürnberg"
+      },
+      "telefon": "0911 9048-500",
+      "fachrichtungen": ["Radiologie", "Innere Medizin"],
+      "erreichbarkeit": "Buslinie 34, Haltestelle Alte Ziegelei. Eigene Tiefgarage mit 40 Plätzen, die erste Stunde kostenfrei.",
+      "oeffnungszeiten": {
+        "montag": [["07:00", "15:00"]],
+        "dienstag": [["07:00", "15:00"]],
+        "mittwoch": [["07:00", "15:00"]],
+        "donnerstag": [["07:00", "15:00"]],
+        "freitag": [["07:00", "13:00"]],
+        "samstag": [],
+        "sonntag": []
+      }
+    },
+    {
+      "id": "kupferberg",
+      "name": "MVZ Am Kupferberg",
+      "adresse": {
+        "strasse": "Kupferbergstraße 88",
+        "plz": "90480",
+        "ort": "Nürnberg"
+      },
+      "telefon": "0911 9057-30",
+      "fachrichtungen": ["Gynäkologie", "Kardiologie"],
+      "erreichbarkeit": "S-Bahn bis Bahnhof Kupferberg, danach 10 Gehminuten oder Buslinie 12 bis Kupferbergstraße. Parkplätze nur am Straßenrand, gebührenpflichtig.",
+      "oeffnungszeiten": {
+        "montag": [["09:00", "12:00"], ["13:00", "17:00"]],
+        "dienstag": [["09:00", "12:00"], ["13:00", "17:00"]],
+        "mittwoch": [["09:00", "12:00"], ["13:00", "17:00"]],
+        "donnerstag": [["09:00", "12:00"], ["13:00", "19:00"]],
+        "freitag": [["09:00", "14:00"]],
+        "samstag": [],
+        "sonntag": []
+      }
+    },
+    {
+      "id": "sonnenfeld",
+      "name": "MVZ Sonnenfeld",
+      "adresse": {
+        "strasse": "Sonnenfelder Allee 5",
+        "plz": "90443",
+        "ort": "Nürnberg"
+      },
+      "telefon": null,
+      "fachrichtungen": ["Neurologie", "Allgemeinmedizin"],
+      "erreichbarkeit": "Straßenbahnlinie 4, Haltestelle Sonnenfelder Allee, direkt gegenüber. Der Standort ist neu eröffnet, die Beschilderung im Erdgeschoss fehlt noch.",
+      "oeffnungszeiten": {
+        "montag": [["08:00", "12:00"], ["13:30", "16:30"]],
+        "dienstag": [["08:00", "12:00"], ["13:30", "16:30"]],
+        "mittwoch": [["08:00", "12:00"]],
+        "donnerstag": [["08:00", "12:00"], ["13:30", "16:30"]],
+        "freitag": [["08:00", "12:00"]],
+        "samstag": [],
+        "sonntag": []
+      }
+    }
+  ],
+  "ueberweisungsregeln": "Für einen Termin in einer unserer fachärztlichen Sprechstunden bringen Sie in der Regel eine Überweisung Ihrer Hausärztin oder Ihres Hausarztes mit. Ausgenommen davon ist die gynäkologische Sprechstunde am Kupferberg, dort können Sie sich ohne Überweisung vorstellen. Waren Sie im laufenden Quartal bereits in derselben Fachrichtung bei uns, genügt der Nachweis dieses Besuchs, eine erneute Überweisung ist dann nicht erforderlich.\n\nBildgebende Untersuchungen in der Radiologie an der Alten Ziegelei setzen immer eine schriftliche Überweisung mit Fragestellung voraus, auch dann, wenn Sie von einer unserer eigenen Sprechstunden geschickt werden. Für eine Magnetresonanztomographie reicht die Überweisung allein nicht aus: Auf ihr muss zusätzlich vermerkt sein, welche Voruntersuchung bereits stattgefunden hat. Fehlt dieser Vermerk, können wir den Termin zwar vereinbaren, die Untersuchung aber erst nach Rücksprache mit der überweisenden Praxis durchführen. Im akuten Notfall entfällt diese Voraussetzung nach ärztlicher Einschätzung vor Ort.\n\nWechseln Sie innerhalb unseres MVZ von einem Standort an einen anderen, bleibt eine bestehende Überweisung gültig, solange die Fachrichtung dieselbe bleibt. Wechseln Sie dagegen die Fachrichtung, wird eine neue Überweisung benötigt, und zwar auch dann, wenn beide Sprechstunden im selben Haus stattfinden. Bei einer Weiterbehandlung, die eine unserer Ärztinnen oder einer unserer Ärzte selbst veranlasst hat, stellen wir die Überweisung intern aus; Sie müssen dafür nicht zur Hausarztpraxis zurück.\n\nPrivat versicherte Patientinnen und Patienten sowie Selbstzahler benötigen grundsätzlich keine Überweisung. Wir empfehlen sie dennoch, weil sie die Vorbefunde enthält und dadurch Doppeluntersuchungen vermeidet. Für Patientinnen und Patienten mit einer Kostenübernahme durch die Berufsgenossenschaft gelten abweichende Regelungen; hier ist vor dem ersten Termin eine Rücksprache mit unserer Verwaltung erforderlich."
+}
