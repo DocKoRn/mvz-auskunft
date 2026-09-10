@@ -26,8 +26,11 @@ def normalisiere(text: str) -> str:
 # Muster (auf normalisiertem Text) -> Name genau wie in standorte.json.
 # \b ist eine Wortgrenze: r"\borthopaed" trifft "Orthopädie" und "Orthopäden",
 # aber NICHT "Kieferorthopädie" - dort steht vor "orthopaed" ein Buchstabe.
-# [PRÜFEN 2] Die Reihenfolge entscheidet bei mehreren Treffern; genommen wird
-# der erste. "Hausarzt oder Orthopäde?" liefert Allgemeinmedizin.
+# Die Reihenfolge entscheidet bei mehreren Treffern; genommen wird der erste.
+# "Hausarzt oder Orthopäde?" liefert Allgemeinmedizin. Entscheidung 10.09.: so
+# gelassen, zwei Fachrichtungen in einer Frage stehen in der README unter
+# "was nicht funktioniert" - eine Rueckfrage dafuer waere ein Dialog, den der
+# Dienst nicht fuehrt.
 FACHRICHTUNGEN = {
     r"\ballgemeinmedizin|\bhausarzt|\bhausaerzt|\ballgemeinarzt|\ballgemeinaerzt": "Allgemeinmedizin",
     r"\binnere\b|\binternist": "Innere Medizin",
@@ -40,17 +43,26 @@ FACHRICHTUNGEN = {
 }
 
 # --- Signalwoerter ----------------------------------------------------------
-# [PRÜFEN 3] Ueberweisung und Notdienst gehen IMMER ans Modell, auch wenn ein
-# Standort oder "wann" in der Frage steht. Sonst wuerde "Wann brauche ich an der
-# Alten Ziegelei eine Überweisung?" als Oeffnungszeiten-Frage beantwortet.
-THEMEN_LLM = re.compile(r"\bueberweis|\bnotdienst|\bbereitschaft|\bnotfall")
+# Ueberweisung und Notdienst gehen IMMER ans Modell, auch wenn ein Standort
+# oder "wann" in der Frage steht. Sonst wuerde "Wann brauche ich an der Alten
+# Ziegelei eine Überweisung?" als Oeffnungszeiten-Frage beantwortet. Regel
+# bestaetigt 10.09.: das Thema entscheidet vor dem Standort.
+# Kosten (Parkgebuehren, Behandlungskosten) und Behindertenstellplaetze ebenso:
+# die Antwort steht im Fliesstext oder an drei Stellen verschieden, nicht in
+# einem Feld. Entscheidung vom 10.09.
+THEMEN_LLM = re.compile(
+    r"\bueberweis|\bnotdienst|\bbereitschaft|\bnotfall"
+    r"|\bkost|\bgebuehr|\bpreis|\bbezahl|\bbehindert"
+)
 
 OEFFNUNG = re.compile(r"\boffen\b|\bgeoeffnet|\boeffnungszeit|\bsprechzeit|\bsprechstunde|\bwann\b|\buhr\b|\bgeschlossen")
 ADRESSE = re.compile(r"\badresse|\banschrift|\bwo ist|\bwo liegt|\bwo finde|\bwie komme|\bwie erreiche|\berreich|\banfahrt|\bhinkomm|\bu-?bahn|\bs-?bahn|\bbahn\b|\bbus\b|\bbarrierefrei|\brollstuhl")
 TELEFON = re.compile(r"\btelefon|\bnummer|\banruf|\btelefonisch")
-# Parken ist ein Sonderfall: MIT Standort deterministisch aus "erreichbarkeit",
-# OHNE Standort ans Modell (Fliesstext "parken"). Entscheidung vom 08.09.
-PARKEN = re.compile(r"\bpark")
+# Parken: MIT Standort deterministisch aus dem Feld "parken", OHNE Standort ans
+# Modell (Fliesstext "parken"). Entscheidung vom 08.09., Feld seit 10.09.
+# "park" absichtlich ohne Wortgrenze: sonst fehlen "Behindertenparkplatz" und
+# "Parkhaus". Dass "Stadtpark" mit anreisst, ist fuer eine Praxisauskunft egal.
+PARKEN = re.compile(r"park|\bstellpl|\btiefgarage|\bgarage|\bauto\b|\bautos\b|\bpkw\b|\bhinstell|\babstell")
 # Woerter, die aus "Fachrichtung erkannt" eine Suche machen: "Wo ...?", "Welcher Standort ...?"
 SUCHE = re.compile(r"\bwo\b|\bwohin\b|\bwelche[rsm]?\b|\bgibt es\b|\bhabt ihr\b|\bhaben sie\b|\bbietet")
 
@@ -104,6 +116,13 @@ def _aliasse(standort: dict) -> list[str]:
     aliasse = [name, strasse]
     if name.startswith("am "):
         aliasse.append(name.removeprefix("am "))  # "Am Kupferberg" -> auch "Kupferberg"
+    # Adjektive im Namen werden dekliniert: "zur Alten Ziegelei", "an der Alten Ziegelei".
+    # Jedes Wort ausser dem letzten, das auf "e" endet, bekommt eine Variante mit "n".
+    # Fund vom 10.09.: ohne das griff "mit dem Auto zur Alten Ziegelei" ins Leere.
+    woerter = name.split()
+    for i, wort in enumerate(woerter[:-1]):
+        if wort.endswith("e"):
+            aliasse.append(" ".join(woerter[:i] + [wort + "n"] + woerter[i + 1:]))
     return aliasse
 
 
@@ -151,7 +170,9 @@ def erkenne_art(frage: str) -> str:
 
     standort = erkenne_standort(frage)
     if standort:
-        # [PRÜFEN 4] Bei Standort + Adress- UND Oeffnungswort gewinnt die Adresse.
+        # Bei Standort + Adress- UND Oeffnungswort gewinnt die Adresse. Entscheidung
+        # 10.09.: wer "wie komme ich ... wann" fragt, will zuerst den Weg; die
+        # Oeffnungszeiten fragt er dann als Naechstes. Umgekehrt waere die Adresse weg.
         if ADRESSE.search(text) or TELEFON.search(text) or PARKEN.search(text):
             return "adresse"
         if OEFFNUNG.search(text) or erkenne_wochentag(frage):
@@ -169,7 +190,7 @@ def erkenne_art(frage: str) -> str:
     # oder schweigt (fremde Strasse).
     if ADRESSE.search(text) or TELEFON.search(text):
         return "adresse"
-    # [PRÜFEN 10] Ohne Standort zaehlt ein Wochentag allein NICHT als Signal:
+    # Ohne Standort zaehlt ein Wochentag allein NICHT als Signal:
     # "Wie wird das Wetter morgen?" bekam sonst eine Rueckfrage nach dem Standort.
     if OEFFNUNG.search(text):
         return "oeffnungszeiten"

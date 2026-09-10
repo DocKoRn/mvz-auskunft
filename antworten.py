@@ -112,10 +112,20 @@ def oeffnungszeiten_aus_daten(standort: dict, wochentag: str | None = None, jetz
 
 
 def adresse_aus_daten(standort: dict) -> str:
-    """Adresse, Telefon und Erreichbarkeit in einem Satz."""
+    """Adresse, Telefon, Erreichbarkeit und - falls hinterlegt - Parken in einem Satz."""
     telefon = standort["telefon"]
     telefon_text = f"Telefon: {telefon}." if telefon else "Eine Telefonnummer ist nicht hinterlegt."
-    return f"{standort['name']}, {_adresse_kurz(standort)}. {telefon_text} Anfahrt: {standort['erreichbarkeit']}"
+    text = f"{standort['name']}, {_adresse_kurz(standort)}. {telefon_text} Anfahrt: {standort['erreichbarkeit']}"
+    if standort["parken"]:
+        text += f" Parken: {standort['parken']}"
+    return text
+
+
+def parken_aus_daten(standort: dict) -> str | None:
+    """Adresse plus Parkangabe - fuer "mit dem Auto" und "wo hinstellen". None, wenn nichts hinterlegt ist."""
+    if not standort["parken"]:
+        return None
+    return f"{standort['name']}, {_adresse_kurz(standort)}. Parken: {standort['parken']}"
 
 
 # --- Zusammenbau: von der Frage zur Antwort ---------------------------------
@@ -125,8 +135,9 @@ def _rueckfrage(frage: str) -> Ergebnis:
     ids = erkenne_standort_kandidaten(frage)
     standorte = [standort_nach_id(i) for i in ids] if len(ids) > 1 else alle_standorte()
     namen = ", ".join(s["name"] for s in standorte)
-    # [PRÜFEN 5] Eine Rueckfrage ist keine Antwort -> quelle "unbekannt".
-    # Lesart von quelle: "daten" = beantwortet aus den Daten, "unbekannt" = nicht beantwortet.
+    # Eine Rueckfrage ist keine Antwort -> quelle "unbekannt". Lesart von quelle:
+    # "daten" = beantwortet aus den Daten, "unbekannt" = bewusst nicht beantwortet.
+    # Bestaetigt 10.09.: passt zu Phase 4, dort zaehlt eine Rueckfrage als Schweige-Fall.
     return Ergebnis(f"Welchen Standort meinen Sie? Ich kenne: {namen}.", "unbekannt")
 
 
@@ -150,9 +161,11 @@ def _antwort_oeffnungszeiten(frage: str, standort: dict, jetzt: datetime) -> Erg
         text = oeffnungszeiten_aus_daten(standort, jetzt=jetzt)
     else:
         text = oeffnungszeiten_aus_daten(standort, wochentag=_wochentag_aufloesen(tag_wort, jetzt))
-    # [PRÜFEN 6 · KRITISCH] Die Daten kennen Oeffnungszeiten nur je Standort, nicht je
-    # Fachrichtung. Fragt jemand nach "Orthopädie am Samstag in Süd", gilt die
-    # Antwort fuer das Haus - der Hinweis macht das sichtbar, statt es zu verschweigen.
+    # Die Daten kennen Oeffnungszeiten nur je Standort, nicht je Fachrichtung.
+    # Fragt jemand nach "Orthopädie am Samstag in Süd", gilt die Antwort fuer das
+    # Haus - der Hinweis macht das sichtbar, statt es zu verschweigen.
+    # Entscheidung 10.09.: kein Datenumbau. Zeiten je Fachrichtung waeren ein zweites
+    # Datenmodell fuer einen einzigen Fall; der Grenzfall steht in der README.
     if erkenne_fachrichtung(frage):
         text += " Die Zeiten gelten für den Standort, nicht für einzelne Fachrichtungen."
     return Ergebnis(text, "daten")
@@ -168,12 +181,12 @@ def _antwort_adresse(frage: str, standort: dict) -> Ergebnis:
         return Ergebnis(f"{name} erreichen Sie telefonisch unter {standort['telefon']}.", "daten")
 
     if PARKEN.search(text):
-        # [PRÜFEN 7 · KRITISCH] Aus der Erreichbarkeit nur die Saetze mit "park" - eine
-        # Textfilterung, kein Nachschlagen. Grenzfall fuer "deterministisch".
-        saetze = [s.strip() for s in standort["erreichbarkeit"].split(".") if "park" in s.lower()]
-        if not saetze:
+        # Eigenes Feld "parken" je Standort - nachschlagen, nicht filtern.
+        # null im Feld = bewusste Luecke -> Schweigen, wie beim Telefon.
+        antwort = parken_aus_daten(standort)
+        if antwort is None:
             return Ergebnis(f"{WEISS_NICHT} Zu Parkmöglichkeiten am {name} ist nichts hinterlegt.", "unbekannt")
-        return Ergebnis(f"Parken am {name}: " + ". ".join(saetze) + ".", "daten")
+        return Ergebnis(antwort, "daten")
 
     return Ergebnis(adresse_aus_daten(standort), "daten")
 
@@ -191,9 +204,10 @@ def beantworte(frage: str, jetzt: datetime | None = None) -> Ergebnis | None:
     """Der deterministische Pfad. None heisst: nicht mein Fall, das Modell ist dran.
 
     `jetzt` ist die einzige Stelle, an der die echte Uhr ins Spiel kommt.
-    [PRÜFEN 8 · KRITISCH] Drei Ausgaenge: Ergebnis mit "daten" (beantwortet), Ergebnis mit
-    "unbekannt" (bewusst nicht beantwortet: Rueckfrage, fremde Strasse, fehlende
-    Nummer) und None (weiterreichen). In Phase 5 haengt am None der LLM-Aufruf.
+    Drei Ausgaenge: Ergebnis mit "daten" (beantwortet), Ergebnis mit "unbekannt"
+    (bewusst nicht beantwortet: Rueckfrage, fremde Strasse, fehlende Nummer) und
+    None (nicht mein Fall - weiterreichen). In Phase 5 haengt am None der
+    LLM-Aufruf; faellt der aus, meldet app.py "nicht_verfuegbar", nie "unbekannt".
     """
     if jetzt is None:
         jetzt = datetime.now()

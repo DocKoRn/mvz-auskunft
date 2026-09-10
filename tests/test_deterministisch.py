@@ -39,6 +39,11 @@ def test_standort_ueber_strasse_ohne_umlaut():
     assert erkenne_standort("Wann hat die Praxis in der Herbstweiherstrasse offen?") == "pegnitzaue-sued"
 
 
+def test_deklinierter_standortname():
+    # "zur Alten Ziegelei" - der Name steht in den Daten als "Alte Ziegelei".
+    assert erkenne_standort("Wie komme ich zur Alten Ziegelei?") == "alte-ziegelei"
+
+
 def test_pegnitzaue_allein_ist_mehrdeutig():
     assert erkenne_standort("Hat Pegnitzaue am Montag offen?") is None
 
@@ -103,3 +108,26 @@ def test_wetter_mit_morgen_bekommt_keine_rueckfrage():
 
 def test_fliesstext_frage_wird_weitergereicht():
     assert beantworte("Brauche ich für die Orthopädie eine Überweisung?", jetzt=MITTWOCH_VORMITTAG) is None
+
+
+# --- Parken: eigenes Feld statt Satzfilter (Entscheidung 10.09.) ----------
+
+def test_auto_frage_liefert_parkfeld():
+    ergebnis = beantworte("Kann ich mit dem Auto zur Alten Ziegelei kommen?", jetzt=MITTWOCH_VORMITTAG)
+    assert ergebnis.quelle == "daten"
+    assert "Tiefgarage" in ergebnis.antwort and "Ziegelei" in ergebnis.antwort
+
+
+def test_parken_ohne_eintrag_schweigt():
+    ergebnis = beantworte("Wo kann ich am Lindenhof mein Auto hinstellen?", jetzt=MITTWOCH_VORMITTAG)
+    assert ergebnis.quelle == "unbekannt"
+
+
+def test_parkkosten_gehen_ans_modell():
+    # Gebuehren stehen im Fliesstext ("nicht zustaendig"), nicht in einem Feld.
+    assert beantworte("Was kostet das Parken am Pegnitzaue Süd?", jetzt=MITTWOCH_VORMITTAG) is None
+
+
+def test_behindertenparkplatz_geht_ans_modell():
+    # Lindenhof hat parken=null, der Fliesstext sagt aber "an jedem Standort" -> nicht schweigen.
+    assert beantworte("Gibt es am Lindenhof einen Behindertenparkplatz?", jetzt=MITTWOCH_VORMITTAG) is None

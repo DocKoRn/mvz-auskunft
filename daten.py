@@ -24,10 +24,11 @@ def lade_daten(pfad: Path = DATEN_PFAD) -> dict:
         return json.load(datei)
 
 
-# [PRÜFEN 1] Die Daten werden genau einmal beim Import geladen.
-# Fehlt die Datei oder ist das JSON kaputt, faellt der Dienst schon beim
-# Start um - nicht erst bei der ersten Frage. Das ist Absicht (fail fast),
-# muss aber als Entscheidung benannt werden koennen.
+# Die Daten werden genau einmal beim Import geladen. Fehlt die Datei oder ist
+# das JSON kaputt, faellt der Dienst schon beim Start um - nicht erst bei der
+# ersten Frage (fail fast). Entscheidung 10.09.: ein Auskunftsdienst ohne Daten
+# soll gar nicht erst antworten; ein Start-Fehler faellt sofort auf, eine
+# Antwort-Ausnahme erst beim ersten Patienten.
 DATEN = lade_daten()
 
 
