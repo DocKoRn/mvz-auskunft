@@ -16,6 +16,9 @@ außerhalb des Repos; hier landet nur, was zum Dienst gehört.
 ## Git
 - Der Entwickler committet. Claude schlägt die Commit-Nachricht vor.
 - Die Historie wird nie umgeschrieben: kein rebase, kein amend, kein force-push.
+  Einzige Ausnahme, 10.09.2026: Entfernen personenbezogener Daten (README, „Anmerkung zur Historie").
+- Das Repo ist öffentlich: keine Namen von Personen, keine Mailadressen, keine Sitzungs-Links –
+  weder in Dateien noch in Commit-Nachrichten. Vor jedem Push prüfen, genau wie beim Schlüssel.
 - Nie einen API-Schlüssel committen. Vor jedem Push: `git ls-files` ansehen,
   `grep -ri "sk-ant" . --exclude=CLAUDE.md` muss leer bleiben (die Regel selbst enthält das Wort).
 
