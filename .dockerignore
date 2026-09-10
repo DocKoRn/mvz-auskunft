@@ -4,3 +4,7 @@ __pycache__/
 *.pyc
 .env
 NOTIZEN.md
+tests/
+testfragen.json
+pruefe_testfragen.py
+.pytest_cache/
