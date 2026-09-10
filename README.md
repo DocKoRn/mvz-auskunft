@@ -7,6 +7,8 @@ und Kosten sind für ein Sprachmodell vorgesehen – dieser Pfad ist noch nicht 
 (siehe unten, *Wo ich aufgehört habe*).
 
 Praxisaufgabe im Rahmen einer Bewerbung, September 2026. Python 3.14, FastAPI, pytest.
+Gebaut mit Claude Code – die Steuerungsdatei ist `CLAUDE.md`; wo der Assistent danebenlag und
+woran ich es gemerkt habe, steht in `ASSISTENT.md`.
 
 ## Starten
 
