@@ -50,10 +50,21 @@ FACHRICHTUNGEN = {
 # Kosten (Parkgebuehren, Behandlungskosten) und Behindertenstellplaetze ebenso:
 # die Antwort steht im Fliesstext oder an drei Stellen verschieden, nicht in
 # einem Feld. Entscheidung vom 10.09.
+# Bewertungen/Empfehlungen (Phase-4-Fund, 10.09.): stehen in keinen Daten - das
+# Modell muss schweigen. Vorher machte "welcher Hausarzt hat die besten
+# Bewertungen" eine Suche daraus und lieferte selbstbewusst eine Standortliste.
 THEMEN_LLM = re.compile(
     r"\bueberweis|\bnotdienst|\bbereitschaft|\bnotfall"
     r"|\bkost|\bgebuehr|\bpreis|\bbezahl|\bbehindert"
+    r"|\bbewert|\bempfehl"
+    r"|\bausserhalb"  # "ausserhalb der Sprechzeiten" ist die Notdienst-Frage, keine Oeffnungszeiten-Frage
 )
+
+# Aktionen, die ein Auskunftsdienst nicht ausfuehrt: buchen, reservieren.
+# Werden VOR dem Modell abgefangen, weil ein Sprachmodell gern so tut, als
+# haette es gebucht. Bewusst nur "buch"/"reservier", nicht "termin": "Muss ich
+# fuer die Radiologie einen Termin vereinbaren?" steht im Ueberweisungstext.
+AUSSERHALB = re.compile(r"\bbuch|\breservier")
 
 OEFFNUNG = re.compile(r"\boffen\b|\bgeoeffnet|\boeffnungszeit|\bsprechzeit|\bsprechstunde|\bwann\b|\buhr\b|\bgeschlossen")
 ADRESSE = re.compile(r"\badresse|\banschrift|\bwo ist|\bwo liegt|\bwo finde|\bwie komme|\bwie erreiche|\berreich|\banfahrt|\bhinkomm|\bu-?bahn|\bs-?bahn|\bbahn\b|\bbus\b|\bbarrierefrei|\brollstuhl")

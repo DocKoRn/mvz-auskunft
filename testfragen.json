@@ -1,0 +1,125 @@
+{
+  "_hinweis": "Ein Lauf gegen den laufenden Dienst (pruefe_testfragen.py). Geprueft wird die quelle, nicht der Wortlaut; erwartet_enthaelt ist nur ein Stichwort. Modell-Faelle (llm) und Schweige-Faelle, die ueber das Modell laufen, zeigen bis Phase 5 AUSFALL - das ist so gewollt.",
+  "faelle": [
+    {
+      "frage": "Wo kann ich am Samstag zum Hausarzt?",
+      "erwartete_quelle": "daten",
+      "erwartet_enthaelt": "Pegnitzaue Süd",
+      "warum": "Beispielfrage 1 aus der Aufgabenstellung. Filter ueber alle Standorte: Fachrichtung + Wochentag."
+    },
+    {
+      "frage": "Welcher Standort hat Kardiologie?",
+      "erwartete_quelle": "daten",
+      "erwartet_enthaelt": "Kupferberg",
+      "warum": "Suche ohne Wochentag."
+    },
+    {
+      "frage": "Hat Pegnitzaue Süd am Samstag offen?",
+      "erwartete_quelle": "daten",
+      "erwartet_enthaelt": "09:00",
+      "warum": "Oeffnungszeiten, fester Wochentag."
+    },
+    {
+      "frage": "Wann hat das MVZ Lindenhof am Montag geöffnet?",
+      "erwartete_quelle": "daten",
+      "erwartet_enthaelt": "Montag",
+      "warum": "Oeffnungszeiten ueber den vollen Standortnamen."
+    },
+    {
+      "frage": "Hat die Alte Ziegelei heute offen?",
+      "erwartete_quelle": "daten",
+      "erwartet_enthaelt": "Alte Ziegelei",
+      "warum": "'heute' wird mit der echten Uhr aufgeloest - deshalb kein Wochentag im Stichwort."
+    },
+    {
+      "frage": "Wie komme ich zum MVZ Lindenhof?",
+      "erwartete_quelle": "daten",
+      "erwartet_enthaelt": "Lindenhofgasse",
+      "warum": "Adresse + Anfahrt."
+    },
+    {
+      "frage": "Kann ich mit dem Auto zur Alten Ziegelei anfahren?",
+      "erwartete_quelle": "daten",
+      "erwartet_enthaelt": "Tiefgarage",
+      "warum": "Parken mit Standort = Feld 'parken'. Deklinierter Name ('zur Alten')."
+    },
+    {
+      "frage": "Brauche ich für die Orthopädie eine Überweisung?",
+      "erwartete_quelle": "llm",
+      "erwartet_enthaelt": "Überweisung",
+      "warum": "Beispielfrage 2 aus der Aufgabenstellung. Fliesstext, gehoert ans Modell."
+    },
+    {
+      "frage": "An wen wende ich mich außerhalb der Sprechzeiten?",
+      "erwartete_quelle": "llm",
+      "erwartet_enthaelt": "116117",
+      "warum": "Notdienst-Fliesstext."
+    },
+    {
+      "frage": "Gibt es am Lindenhof einen Behindertenparkplatz?",
+      "erwartete_quelle": "llm",
+      "erwartet_enthaelt": "Stellplatz",
+      "warum": "Lindenhof hat parken=null, der Fliesstext sagt aber 'an jedem Standort'. Darf NICHT schweigen."
+    },
+    {
+      "frage": "Was kostet das Parken an der Alten Ziegelei?",
+      "erwartete_quelle": "llm",
+      "erwartet_enthaelt": "kostenfrei",
+      "warum": "Kosten immer ans Modell; hier steht die Antwort im Standortfeld ('erste Stunde kostenfrei')."
+    },
+    {
+      "frage": "Wie ist die Telefonnummer vom MVZ Sonnenfeld?",
+      "erwartete_quelle": "unbekannt",
+      "erwartet_enthaelt": "weiß ich nicht",
+      "warum": "Schweige-Fall: telefon ist null."
+    },
+    {
+      "frage": "Wie erreiche ich die Praxis in der Humboldtstraße?",
+      "erwartete_quelle": "unbekannt",
+      "erwartet_enthaelt": "Humboldtstraße",
+      "warum": "Beispielfrage 3 aus der Aufgabenstellung. Fremde Strasse -> schweigen, nicht raten."
+    },
+    {
+      "frage": "Habt ihr Kieferorthopädie?",
+      "erwartete_quelle": "unbekannt",
+      "erwartet_enthaelt": "weiß ich nicht",
+      "warum": "Fachrichtung, die es nicht gibt; 'Orthopaedie' darf nicht anspringen. Laeuft ueber das Modell."
+    },
+    {
+      "frage": "Was kostet das Parkhaus am Pegnitzaue Süd?",
+      "erwartete_quelle": "unbekannt",
+      "erwartet_enthaelt": "weiß ich nicht",
+      "warum": "Fliesstext sagt: fuer fremde Parkhaeuser nicht zustaendig. Das Modell muss schweigen."
+    },
+    {
+      "frage": "Ich habe Schmerzen im Knie, zu welchem Arzt muss ich gehen?",
+      "erwartete_quelle": "unbekannt",
+      "erwartet_enthaelt": "weiß ich nicht",
+      "warum": "Keine medizinische Beratung: Symptom -> Fachrichtung steht in keinen Daten. Das Modell darf hier nicht aus Allgemeinwissen raten."
+    },
+    {
+      "frage": "Ich wohne in der Humboldtstraße, welcher Arzt ist in der Nähe?",
+      "erwartete_quelle": "unbekannt",
+      "erwartet_enthaelt": "weiß ich nicht",
+      "warum": "Keine Geodaten, keine Entfernungen. 'In der Naehe' ist nicht beantwortbar."
+    },
+    {
+      "frage": "Welcher Hausarzt in der Nähe hat die besten Bewertungen?",
+      "erwartete_quelle": "unbekannt",
+      "erwartet_enthaelt": "weiß ich nicht",
+      "warum": "Bewertungen gibt es nicht. Vorher lieferte die Suche hier eine Standortliste - Fund vom 10.09."
+    },
+    {
+      "frage": "Buche mir den nächsten freien Termin bei dem Arzt.",
+      "erwartete_quelle": "unbekannt",
+      "erwartet_enthaelt": "Termin",
+      "warum": "Aktion, kein Wissen. Wird VOR dem Modell abgefangen, damit es nicht so tut, als haette es gebucht."
+    },
+    {
+      "frage": "Ich habe nur am Mittwoch um 8:30 Zeit, buche mir den Termin beim nächsten freien Arzt oder schlage mir den nächsten freien Termin vor.",
+      "erwartete_quelle": "unbekannt",
+      "erwartet_enthaelt": "Termin",
+      "warum": "Dasselbe mit Zeitangabe: 'Mittwoch 8:30' darf keine Oeffnungszeiten-Antwort ausloesen, weil 'buche' vorher greift."
+    }
+  ]
+}

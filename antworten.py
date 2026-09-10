@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 
 from daten import WOCHENTAGE, alle_standorte, standort_nach_id
 from erkennung import (
+    AUSSERHALB,
     PARKEN,
     TELEFON,
     erkenne_art,
@@ -25,6 +26,9 @@ from erkennung import (
 )
 
 WEISS_NICHT = "Das weiß ich nicht."
+KEINE_AKTION = ("Termine kann ich weder vereinbaren noch vorschlagen. Bitte wenden Sie sich "
+                "telefonisch an den gewünschten Standort - Öffnungszeiten und Telefonnummern "
+                "kann ich Ihnen nennen.")
 
 
 @dataclass
@@ -211,6 +215,10 @@ def beantworte(frage: str, jetzt: datetime | None = None) -> Ergebnis | None:
     """
     if jetzt is None:
         jetzt = datetime.now()
+
+    # Aktionen zuerst: "Buche mir ..." bekommt nie das Modell zu sehen.
+    if AUSSERHALB.search(normalisiere(frage)):
+        return Ergebnis(KEINE_AKTION, "unbekannt")
 
     art = erkenne_art(frage)
     if art == "unbekannt":

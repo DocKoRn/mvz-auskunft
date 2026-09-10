@@ -131,3 +131,26 @@ def test_parkkosten_gehen_ans_modell():
 def test_behindertenparkplatz_geht_ans_modell():
     # Lindenhof hat parken=null, der Fliesstext sagt aber "an jedem Standort" -> nicht schweigen.
     assert beantworte("Gibt es am Lindenhof einen Behindertenparkplatz?", jetzt=MITTWOCH_VORMITTAG) is None
+
+
+# --- Phase-4-Funde (10.09.): Fragen, die der Dienst nicht beantworten kann ---
+
+def test_bewertungsfrage_wird_keine_suche():
+    # Vorher: Hausarzt + "welcher" -> Suche -> Standortliste. Bewertungen gibt es aber nicht.
+    assert beantworte("Welcher Hausarzt in der Nähe hat die besten Bewertungen?", jetzt=MITTWOCH_VORMITTAG) is None
+
+
+def test_buchen_wird_vor_dem_modell_abgefangen():
+    ergebnis = beantworte("Buche mir den nächsten freien Termin bei dem Arzt.", jetzt=MITTWOCH_VORMITTAG)
+    assert ergebnis.quelle == "unbekannt"
+    assert "Termin" in ergebnis.antwort
+
+
+def test_terminfrage_ohne_buchen_bleibt_beim_modell():
+    # Steht im Ueberweisungstext - das darf das Modell beantworten.
+    assert beantworte("Muss ich für die Radiologie einen Termin vereinbaren?", jetzt=MITTWOCH_VORMITTAG) is None
+
+
+def test_ausserhalb_der_sprechzeiten_ist_notdienst():
+    # "sprechzeit" ist ein Oeffnungswort - aber die Frage meint den Notdienst (Fliesstext).
+    assert beantworte("An wen wende ich mich außerhalb der Sprechzeiten?", jetzt=MITTWOCH_VORMITTAG) is None
